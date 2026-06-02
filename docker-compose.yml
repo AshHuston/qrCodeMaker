@@ -1,0 +1,23 @@
+services:
+  buzzers:
+    build:
+      context: .
+      args:
+        VITE_APP_HOST: ${APP_HOST}
+
+    container_name: qrcode-maker
+    restart: unless-stopped
+
+    networks:
+      - proxy
+
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.vueapp.rule=Host(`${APP_HOST}`)"
+      - "traefik.http.routers.vueapp.entrypoints=websecure"
+      - "traefik.http.routers.vueapp.tls.certresolver=letsencrypt"
+      - "traefik.http.services.vueapp.loadbalancer.server.port=3000"
+
+networks:
+  proxy:
+    external: true
